@@ -8,7 +8,8 @@ import {
     updateCombatHandler,
     deleteCombatHandler,
     getBoxersByCombatIdHandler,
-    hideCombatHandler
+    hideCombatHandler,
+    filterCombatsByWeightCategoryHandler
 } from '../combats/combat_controller.js';
 
 const router = express.Router();
@@ -273,4 +274,53 @@ router.get('/combat/:id/boxers', getBoxersByCombatIdHandler);
  *         description: Combate no encontrado
  */
 router.put('/combat/:id/oculto', hideCombatHandler);
+/**
+ * @openapi
+ * /api/combat/filter:
+ *   get:
+ *     summary: Filtra combates por categoría de peso
+ *     description: Obtiene una lista de combates filtrados por categoría de peso.
+ *     tags:
+ *       - Combat
+ *     parameters:
+ *       - name: category
+ *         in: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: Categoría de peso a filtrar
+ *     responses:
+ *       200:
+ *         description: Lista de combates filtrada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: ID del combate
+ *                   gym:
+ *                     type: string
+ *                     description: ID del gimnasio
+ *                   date:
+ *                     type: string
+ *                     format: date-time
+ *                     description: Fecha del combate
+ *                   boxers:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     description: Lista de IDs de los boxeadores
+ *                   weightCategory:
+ *                     type: string
+ *                     description: Categoría de peso del combate
+ *       400:
+ *         description: Categoría de peso no proporcionada
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.get('/combat/filter', filterCombatsByWeightCategoryHandler);
 export default router;

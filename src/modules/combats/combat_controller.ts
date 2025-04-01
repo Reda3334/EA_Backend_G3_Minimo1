@@ -1,5 +1,5 @@
 // src/controllers/_controller.ts
-import { saveMethod, createCombat, getAllCombats, getCombatById, updateCombat, deleteCombat, getBoxersByCombatId, hideCombat } from '../combats/combat_service.js';
+import { saveMethod, createCombat, getAllCombats, getCombatById, updateCombat, deleteCombat, getBoxersByCombatId, hideCombat, filterCombatsByWeightCategory } from '../combats/combat_service.js';
 
 import express, { Request, Response } from 'express';
 
@@ -13,8 +13,23 @@ export const saveMethodHandler = async (req: Request, res: Response) => {
 };
 export const createCombatHandler = async (req: Request, res: Response) => {
     try {
+        console.log('Datos recibidos para crear combate:', req.body); // Registrar los datos recibidos
         const combat = await createCombat(req.body);
-        res.json(combat);
+        res.status(201).json(combat);
+    } catch (error: any) {
+        console.error('Error en createCombatHandler:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const filterCombatsByWeightCategoryHandler = async (req: Request, res: Response) => {
+    try {
+        const { category } = req.query;
+        if (!category) {
+            return res.status(400).json({ message: 'La categoría de peso es requerida' });
+        }
+        const combats = await filterCombatsByWeightCategory(category as string);
+        res.status(200).json(combats);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
     }

@@ -7,24 +7,49 @@ export const saveMethod = () => {
 };
 export const createCombat = async (combatData: ICombat) => {
     try {
-        // Asegúrate de que gym es un ObjectId válido.
+        // Validar que los datos requeridos estén presentes
+        if (!combatData.gym) {
+            throw new Error('El campo "gym" es obligatorio.');
+        }
+        if (!combatData.boxers || combatData.boxers.length === 0) {
+            throw new Error('Debe haber al menos un boxeador en el combate.');
+        }
+
+        // Validar y procesar los datos del gimnasio
         if (typeof combatData.gym === 'string') {
             combatData.gym = new mongoose.Types.ObjectId(combatData.gym);
         }
-        
-        // Asegúrate de que boxers es un array ObjectId válido.
+
+        // Validar y procesar los IDs de los boxeadores
         if (Array.isArray(combatData.boxers)) {
-            combatData.boxers = combatData.boxers.map(id => 
+            combatData.boxers = combatData.boxers.map(id =>
                 typeof id === 'string' ? new mongoose.Types.ObjectId(id) : id
             );
         }
-        
-        console.log('Datos de combate procesados:', combatData);
-        
-        const combat = new Combat(combatData);
+
+        // Asignar el campo weightCategory si está presente
+        const combat = new Combat({
+            ...combatData,
+            weightCategory: combatData.weightCategory || "No es competitivo, sin categoría"
+        });
+
         return await combat.save();
     } catch (error) {
-        console.error('Createcombat error:', error);
+        console.error('Error en createCombat:', error);
+        throw error;
+    }
+};
+
+export const filterCombatsByWeightCategory = async (category: string) => {
+    try {
+        return await Combat.find({
+            $or: [
+                { weightCategory: category },
+                { weightCategory: { $exists: false } } // Incluye documentos sin el campo
+            ]
+        });
+    } catch (error) {
+        console.error('Error en filterCombatsByWeightCategory:', error);
         throw error;
     }
 };

@@ -6,6 +6,7 @@ export interface ICombat{
     gym : Types.ObjectId;
     boxers : Types.ObjectId[];
     isHidden : boolean;
+    weightCategory: string; // Nuevo campo
 
 }
 
@@ -27,6 +28,11 @@ const combatSchema = new Schema<ICombat>({
     isHidden: {
         type : Boolean,
         default : false
+    },
+    weightCategory: { // Nuevo campo
+        type: String,
+        required: false,
+        default: "No es competitivo, sin categoría"
     }
 });
 
