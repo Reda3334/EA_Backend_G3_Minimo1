@@ -1,3 +1,9 @@
+# Minimo 1
+He añadido la categoría "Categoría de peso" en la component combate
+Permite clasificar los combates por categorías de peso (Si el guanteo no es competitivo también pone "No competitivo", que es el valor por defecto)
+Todo funciona perfecto en el backend y el frontend
+
+
 # Prova API
 
 ## Descripció
